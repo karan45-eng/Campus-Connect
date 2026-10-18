@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block breadcrumb %}{{ title }}{% endblock %}
+{% block content %}
+<div class="page-heading"><div><a class="back-link" href="javascript:history.back()"><i class="bi bi-arrow-left"></i> Back</a><h1>{{ title }}</h1><p>{{ subtitle }}</p></div></div>
+<div class="content-narrow"><div class="panel form-panel"><form method="post" action="{{ action_url }}" {% if multipart %}enctype="multipart/form-data"{% endif %} novalidate><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% for field in fields %}<div class="form-field mb-4">
+  <label class="form-label" for="{{ field.name }}">{{ field.label }}{% if field.required %}<span class="required-mark"> *</span>{% endif %}</label>
+  {% if field.type == 'textarea' %}<textarea class="form-control" id="{{ field.name }}" name="{{ field.name }}" rows="5" {% if field.required %}required{% endif %} maxlength="{% if field.name == 'description' %}8000{% elif field.name == 'comment' %}2000{% else %}3000{% endif %}" placeholder="Enter {{ field.label|lower }}">{{ request.form.get(field.name, field.value) }}</textarea>
+  {% elif field.type == 'select' %}<select class="form-select" id="{{ field.name }}" name="{{ field.name }}" {% if field.required %}required{% endif %}>{% for value, label in field.options %}<option value="{{ value }}" {% if request.form.get(field.name, field.value|string) == value|string %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  {% elif field.type == 'checkbox' %}<div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="{{ field.name }}" name="{{ field.name }}" {% if (request.method == 'POST' and request.form.get(field.name) == 'on') or (request.method != 'POST' and field.value) %}checked{% endif %}><label class="form-check-label" for="{{ field.name }}">{{ field.label }}</label></div>
+  {% elif field.type == 'file' %}<input class="form-control" type="file" id="{{ field.name }}" name="{{ field.name }}" {% if field.accept %}accept="{{ field.accept }}"{% endif %}>
+  {% else %}<input class="form-control" type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}" value="{{ request.form.get(field.name, field.value) }}" {% if field.required %}required{% endif %} {% if field.type == 'url' %}maxlength="500"{% endif %}>{% endif %}
+  {% if field.help %}<div class="form-text">{{ field.help }}</div>{% endif %}
+</div>{% endfor %}
+<div class="form-actions"><a class="btn btn-light rounded-pill px-4" href="{{ url_for('dashboard') }}">Cancel</a><button class="btn btn-primary rounded-pill px-4" type="submit">{{ submit_label }} <i class="bi bi-arrow-right ms-1"></i></button></div></form></div><p class="form-security-note"><i class="bi bi-shield-check"></i> Your submission is validated on the server and saved to the campus database.</p></div>
+{% endblock %}

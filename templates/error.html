@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block title %}{{ code }} · {{ title }}{% endblock %}
+{% block breadcrumb %}{{ title }}{% endblock %}
+{% block content %}<div class="error-page panel"><div class="error-code">{{ code }}</div><span class="error-icon"><i class="bi bi-shield-exclamation"></i></span><h1>{{ title }}</h1><p>{{ message }}</p><div class="d-flex gap-2 justify-content-center mt-4"><a class="btn btn-primary rounded-pill px-4" href="{{ url_for('dashboard') if current_user else url_for('index') }}">Go to {{ 'dashboard' if current_user else 'home' }}</a><button class="btn btn-light rounded-pill px-4" type="button" onclick="history.back()">Go back</button></div></div>{% endblock %}
